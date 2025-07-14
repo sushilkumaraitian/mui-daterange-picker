@@ -1,6 +1,6 @@
 # MUI DateRange Picker
 
-A react date range picker implementation using @mui (v5).
+A react date range picker implementation using @mui (v5). This is the original project with updated dependencies to ensure compatibility with the latest versions of Material-UI and React.
 
 <a href='https://www.npmjs.com/package/mui-daterange-picker'>
     <img src='https://img.shields.io/npm/v/mui-daterange-picker.svg' alt='Latest npm version'>
