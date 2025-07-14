@@ -1,4 +1,4 @@
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import external from 'rollup-plugin-peer-deps-external';
@@ -25,7 +25,7 @@ export default {
       sourcemap: true,
     },
   ],
-  external: [/@babel\/runtime/],
+  external: ['react', 'react-dom', '@babel/runtime'],
   plugins: [
     external(),
     url({ exclude: ['**/*.svg'] }),
@@ -36,8 +36,8 @@ export default {
     }),
     resolve(),
     typescript({
-      rollupCommonJSResolveHack: true,
-      clean: true,
+      tsconfig: '../tsconfig.json',
+      exclude: ['**/*.test.tsx', '**/*.stories.tsx']
     }),
     commonjs(commonjsOptions),
   ],

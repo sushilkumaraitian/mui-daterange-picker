@@ -3,6 +3,7 @@ import { Paper, Grid, Typography } from "@mui/material";
 import {
   getDate, isSameMonth, isToday, format, isWithinInterval
 } from "date-fns";
+import type { Locale } from 'date-fns';
 import {
   chunks, getDaysInMonth, isStartOfRange, isEndOfRange, inDateRange, isRangeSameDay
 } from "../utils";
@@ -50,9 +51,16 @@ const Month: React.FunctionComponent<MonthProps> = (props: MonthProps) => {
   } = props;
 
   const weekStartsOn = locale?.options?.weekStartsOn || 0;
-  const WEEK_DAYS = typeof locale !== 'undefined'
-    ? [...Array(7).keys()].map(d => locale.localize?.day((d+weekStartsOn) % 7, {width: 'short', context: 'standalone'}))
-    : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  // Type assertion for day index to work around date-fns Locale type issue
+  type DayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  const weekDays: string[] = (() => {
+    if (locale?.localize) {
+      return [...Array(7).keys()].map(d => 
+        (locale.localize as any)?.day(((d + weekStartsOn) % 7) as DayIndex, {width: 'short', context: 'standalone'})
+      );
+    }
+    return ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  })();
   const [back, forward] = props.navState;
 
   return (
@@ -79,7 +87,7 @@ const Month: React.FunctionComponent<MonthProps> = (props: MonthProps) => {
             paddingRight: "30px"
           }}
         >
-          {WEEK_DAYS.map((day, index) => (
+          {weekDays.map((day: string, index: number) => (
             <Typography color="textSecondary" key={index} variant="caption">
               {day}
             </Typography>

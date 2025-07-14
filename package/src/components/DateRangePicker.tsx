@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  addMonths, addYears, isAfter, isBefore, isSameDay, isSameMonth, isWithinInterval, max, min,
+  addMonths, addYears, isAfter, isBefore, isSameDay, isSameMonth, isWithinInterval, Locale, max, min,
 } from 'date-fns';
 import { DateRange, DefinedRange, NavigationAction } from '../types';
 import { getValidatedMonths, parseOptionalDate } from '../utils';
@@ -65,19 +65,24 @@ const DateRangePicker: React.FunctionComponent<DateRangePickerProps> = (
   };
 
   const setDateRangeValidated = (range: DateRange) => {
-    let { startDate: newStart, endDate: newEnd } = range;
+    const { startDate: newStart, endDate: newEnd } = range;
 
     if (newStart && newEnd) {
-      range.startDate = newStart = max([newStart, minDateValid]);
-      range.endDate = newEnd = min([newEnd, maxDateValid]);
+      const safeNewStart = max([newStart, minDateValid]);
+      const safeNewEnd = min([newEnd, maxDateValid]);
+      
+      const newRange = {
+        startDate: safeNewStart,
+        endDate: safeNewEnd
+      };
 
-      setDateRange(range);
-      onChange(range);
+      setDateRange(newRange);
+      onChange(newRange);
 
-      setFirstMonth(newStart);
-      setSecondMonth(isSameMonth(newStart, newEnd) ? addMonths(newStart, 1) : newEnd);
+      setFirstMonth(safeNewStart);
+      setSecondMonth(isSameMonth(safeNewStart, safeNewEnd) ? addMonths(safeNewStart, 1) : safeNewEnd);
     } else {
-      const emptyRange = {};
+      const emptyRange = {} as DateRange;
 
       setDateRange(emptyRange);
       onChange(emptyRange);

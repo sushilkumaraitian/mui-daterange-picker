@@ -2,7 +2,7 @@ import {FormControl, Grid, IconButton, MenuItem, Select, SelectChangeEvent} from
 import React from 'react';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import ChevronRight from '@mui/icons-material/ChevronRight';
-import {getMonth, getYear, setMonth, setYear} from 'date-fns';
+import {getMonth, getYear, Locale, setMonth, setYear} from 'date-fns';
 
 interface HeaderProps {
   date: Date;
@@ -31,8 +31,12 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   onClickPrevious,
   locale
 }: HeaderProps) => {
+  // Type assertion for month index to work around date-fns Locale type issue
+  type MonthIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
   const MONTHS = typeof locale !== 'undefined'
-    ? [...Array(12).keys()].map(d => locale.localize?.month(d, {width: 'abbreviated', context: 'standalone'}))
+    ? [...Array(12).keys()].map(d => 
+        (locale.localize as any)?.month(d as MonthIndex, {width: 'abbreviated', context: 'standalone'})
+      )
     : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
   const handleMonthChange = (event: SelectChangeEvent<number>) => {
